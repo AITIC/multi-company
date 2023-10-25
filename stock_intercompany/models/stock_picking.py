@@ -34,6 +34,12 @@ class StockPicking(models.Model):
             )
         ptype = company.intercompany_in_type_id or warehouse.in_type_id
         move_lines, move_line_ids = self._check_company_consistency(company)
+        for line in move_lines:
+            line[2].update({"location_dest_id": warehouse.lot_stock_id.id,
+                            "location_id": self.env.ref("stock.stock_location_suppliers").id})
+        for line in move_line_ids:
+            line[2].update({"location_dest_id": warehouse.lot_stock_id.id,
+                            "location_id": self.env.ref("stock.stock_location_suppliers").id})
         return {
             "partner_id": self.env.user.company_id.partner_id.id,
             "company_id": company.id,
